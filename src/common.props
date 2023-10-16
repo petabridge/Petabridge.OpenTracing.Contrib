@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <Copyright>Copyright © 2017-2023 Petabridge</Copyright>
+    <VersionPrefix>1.5.13</VersionPrefix>
+    <PackageReleaseNotes>
+    </PackageReleaseNotes>
+    <Authors>Petabridge</Authors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NetFrameworkLibVersion>net461</NetFrameworkLibVersion>
+    <NetStandardLibVersion>netstandard2.0</NetStandardLibVersion>
+  </PropertyGroup>
+  <!-- NuGet package properties -->
+  <PropertyGroup>
+    <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/petabridge/Akka.Persistence.Azure/</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../docs/images/logo.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

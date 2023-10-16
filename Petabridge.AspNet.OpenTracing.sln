@@ -4,6 +4,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petabridge.AspNet.OpenTraci
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Petabridge.AspNet.OpenTracing", "src\Petabridge.AspNet.OpenTracing\Petabridge.AspNet.OpenTracing.csproj", "{23D64EBD-E119-4691-A2A4-6ED30E85A10B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{03AE82EB-9123-4472-A092-544079018881}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		build.fsx = build.fsx
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+		RELEASE_NOTES.md = RELEASE_NOTES.md
+		src\common.props = src\common.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-system", "build-system", "{5258C591-4BD9-4E0F-955A-49E7DC75FF13}"
+	ProjectSection(SolutionItems) = preProject
+		build-system\azure-pipeline.template.yaml = build-system\azure-pipeline.template.yaml
+		build-system\README.md = build-system\README.md
+		build-system\windows-pr-validation.yaml = build-system\windows-pr-validation.yaml
+		build-system\windows-release.yaml = build-system\windows-release.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +38,8 @@ Global
 		{23D64EBD-E119-4691-A2A4-6ED30E85A10B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23D64EBD-E119-4691-A2A4-6ED30E85A10B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23D64EBD-E119-4691-A2A4-6ED30E85A10B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5258C591-4BD9-4E0F-955A-49E7DC75FF13} = {03AE82EB-9123-4472-A092-544079018881}
 	EndGlobalSection
 EndGlobal
