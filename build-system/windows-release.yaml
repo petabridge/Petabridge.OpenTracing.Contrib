@@ -14,18 +14,18 @@ variables:
   - group: Signing Keys #create this group with SECRET variables `signingUsername` and `signingPassword`
   - group: NuGet Keys #create this group with SECRET variables `nugetKey`
   - name: githubConnectionName
-    value: Releases #replace this
+    value: PbReleaseNotes
   - name: projectName
-    value: Akka.Persistence.Azure #replace this
+    value: Petabridge.OpenTracing.Contrib
   - name: githubRepositoryName
-    value: petabridge/Akka.Persistence.Azure #replace this
+    value: petabridge/Petabridge.OpenTracing.Contrib
 
 steps:
 - task: BatchScript@1
   displayName: 'FAKE Build'
   inputs:
     filename: build.cmd
-    arguments: 'Nuget SignClientUser=$(signingUsername) SignClientSecret=$(signingPassword) nugetpublishurl=https://api.nuget.org/v3/index.json nugetkey=$(Akka.NET Tools NuGet)'
+    arguments: 'Nuget nugetpublishurl=https://api.nuget.org/v3/index.json nugetkey=$(Akka.NET Tools NuGet)'
 
 - task: GitHubRelease@0
   displayName: 'GitHub release (create)'
