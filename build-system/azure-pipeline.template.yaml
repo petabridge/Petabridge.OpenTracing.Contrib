@@ -1,0 +1,63 @@
+parameters:
+  name: ''
+  vmImage: ''
+  scriptFileName: ''
+  scriptArgs: 'all'
+  timeoutInMinutes: 120
+
+jobs:
+  - job: ${{ parameters.name }}
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    steps:
+      - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+        clean: false  # whether to fetch clean each time
+        submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules
+        persistCredentials: true
+      # Linux or macOS
+      - task: Bash@3 
+        displayName: Linux / OSX Build
+        inputs:
+          filePath: ${{ parameters.scriptFileName }}
+          arguments: ${{ parameters.scriptArgs }}
+        continueOnError: true
+        condition: in( variables['Agent.OS'], 'Linux', 'Darwin' )
+      # Windows
+      - displayName: Install component on windows 2022
+        pwsh: |
+          Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+          $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+          $componentsToAdd = @(
+            "Microsoft.Net.Component.4.6.1.SDK",
+            "Microsoft .NET Framework 4.6.1 Targeting Pack"
+          )
+          [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " +  $_}
+          $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
+          $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+          if ($process.ExitCode -eq 0)
+          {
+              Write-Host "components have been successfully added"
+          }
+          else
+          {
+              Write-Host "components were not installed"
+              exit 1
+          }      
+      - task: BatchScript@1
+        displayName: Windows Build
+        inputs:
+          filename: ${{ parameters.scriptFileName }}
+          arguments: ${{ parameters.scriptArgs }}
+        continueOnError: true
+        condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      - task: PublishTestResults@2
+        inputs:
+          testRunner: VSTest
+          testResultsFiles: '**/*.trx' #TestResults folder usually
+          testRunTitle: ${{ parameters.name }}
+          mergeTestResults: true
+      - script: 'echo 1>&2'
+        failOnStderr: true
+        displayName: 'If above is partially succeeded, then fail'
+        condition: eq(variables['Agent.JobStatus'], 'SucceededWithIssues')
