@@ -83,17 +83,21 @@ namespace Petabridge.AspNet.OpenTracing
             scope.Span.SetTag(Tags.HttpStatus, context.Response.StatusCode);
             context.Items.Remove(Defaults.OpenTracingContextItem);
             
-            // Propagate the span
-            var headersDictionary = new RequestHeadersAdapter();
-            GlobalTracer.Instance.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, headersDictionary);
-
-            var contextNvc = headersDictionary.Aggregate(new NameValueCollection(), (v, item) =>
+            // We can not propagate our span if the response header has already been written
+            if (!context.Response.HeadersWritten)
             {
-                v.Add(item.Key, item.Value);
-                return v;
-            });
+                // Propagate the span
+                var headersDictionary = new RequestHeadersAdapter();
+                GlobalTracer.Instance.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, headersDictionary);
+
+                var contextNvc = headersDictionary.Aggregate(new NameValueCollection(), (v, item) =>
+                {
+                    v.Add(item.Key, item.Value);
+                    return v;
+                });
             
-            context.Response.Headers.Add(contextNvc);
+                context.Response.Headers.Add(contextNvc);
+            }
             
             scope.Dispose();
         }
@@ -117,12 +121,14 @@ namespace Petabridge.AspNet.OpenTracing
                 { LogFields.ErrorKind, ex.GetType().Name },
                 { LogFields.ErrorObject, ex }
             });
+            
+            scope.Dispose();
         }
         
         public void Init(HttpApplication context)
         {
             context.BeginRequest += BeginRequestHandler;
-            context.EndRequest += EndRequestHandler;
+            context.PostRequestHandlerExecute += EndRequestHandler;
             context.Error += ErrorHandler;
         }
 
